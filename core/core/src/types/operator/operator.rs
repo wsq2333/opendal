@@ -32,6 +32,13 @@ use crate::*;
 /// For more details about the `Operator`, refer to the concepts section in the
 /// crate documentation.
 ///
+/// ## Operation paths
+///
+/// Leading `/` characters and repeated separators are normalized. Leading and
+/// trailing whitespace is preserved: `file` and `file ` identify distinct paths
+/// when the underlying service supports those names. Applications that want to
+/// trim user input must do so before passing it to an operator.
+///
 /// ## Immutability
 ///
 /// `Operator` is immutable: methods that change layers, the HTTP transport, or the

@@ -1,5 +1,16 @@
 # Unreleased
 
+## Whitespace in operation paths
+
+Operation paths now preserve leading and trailing whitespace. For example,
+`read("file ")` accesses `file ` rather than `file`, and a whitespace-only name
+is no longer treated as the root. This applies to all operations that normalize
+paths, including writes, copies, renames, and deletes. Backend filename
+restrictions still apply.
+
+Applications that intentionally relied on implicit trimming must trim their
+input explicitly before calling OpenDAL. Slash normalization is unchanged.
+
 ## Moka and MiniMoka configuration durations
 
 `MokaConfig` and `MiniMokaConfig` now use `Option<jiff::SignedDuration>` for
