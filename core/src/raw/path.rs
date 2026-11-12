@@ -90,14 +90,14 @@ pub fn build_rel_path(root: &str, path: &str) -> String {
 ///
 /// # Normalize Rules
 ///
-/// - All whitespace will be trimmed: ` abc/def ` => `abc/def`
+/// - Whitespace in path components is preserved: ` abc/def ` => ` abc/def `
 /// - All leading / will be trimmed: `///abc` => `abc`
 /// - Internal // will be replaced by /: `abc///def` => `abc/def`
 /// - Empty path will be `/`: `` => `/`
 pub fn normalize_path(path: &str) -> String {
-    // - all whitespace has been trimmed.
-    // - all leading `/` has been trimmed.
-    let path = path.trim().trim_start_matches('/');
+    // Whitespace is part of the object key, not user-input padding.
+    // Only remove leading separators.
+    let path = path.trim_start_matches('/');
 
     // Fast line for empty path.
     if path.is_empty() {
@@ -284,7 +284,13 @@ mod tests {
             ("abs dir path with extra /", "///abc/def/", "abc/def/"),
             ("file path contains ///", "abc///def", "abc/def"),
             ("dir path contains ///", "abc///def///", "abc/def/"),
-            ("file with whitespace", "abc/def   ", "abc/def"),
+            ("file with trailing whitespace", "abc/def   ", "abc/def   "),
+            ("file with leading whitespace", " abc/def", " abc/def"),
+            ("whitespace-only filename", " ", " "),
+            ("absolute whitespace filename", "/ ", " "),
+            ("unicode whitespace", "abc/def\u{a0}", "abc/def\u{a0}"),
+            ("tab filename", "abc/def\t", "abc/def\t"),
+            ("directory with spaces", " a / b /", " a / b /"),
         ];
 
         for (name, input, expect) in cases {
